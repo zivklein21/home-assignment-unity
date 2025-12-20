@@ -1,5 +1,5 @@
 import express from "express";
-import purchasesRoutes from "./routes/purchase.route";
+import purchasesRoutes from "../../customer-api/src/routes/purchase.route";
 
 export function buildApp() {
   const app = express();
