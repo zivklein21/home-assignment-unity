@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-api
+  template:
+    metadata:
+      labels:
+        app: customer-api
+    spec:
+      containers:
+        - name: customer-api
+          image: zivklein21/customer-api:v4
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongo:27017/customers
+            - name: KAFKA_BROKERS
+              value: kafka:9092
+            - name: KAFKA_TOPIC
+              value: purchases
+            - name: KAFKA_GROUP_ID
+              value: customer-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-api
+spec:
+  selector:
+    app: customer-api
+  ports:
+    - port: 80
+      targetPort: 8080

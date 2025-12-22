@@ -39,6 +39,7 @@ export async function startConsumer({ brokers, topic, groupId }: StartConsumerAr
         price: Number(event.price),
         timestamp: String(event.timestamp),
       });
+      console.log("Purchase save to DB", event);
     },
   });
 
