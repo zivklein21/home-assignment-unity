@@ -1,5 +1,5 @@
 export async function fetchUserPurchases(baseUrl: string, userId: string) {
-  const url = `${baseUrl}/purchases/${encodeURIComponent(userId)}`;
+  const url = `${baseUrl}/purchases/${userId}`;
 
   const r = await fetch(url, { headers: { Accept: "application/json" } });
   const text = await r.text();
