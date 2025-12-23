@@ -13,7 +13,7 @@ customerApi:
     name: customer-api
     replicas: 1
     image: zivklein21/customer-api
-    tag: 4a1e2dc663
+    tag: 3bba7cfbd7
     containerPort: 8080
   service:
     port: 80
