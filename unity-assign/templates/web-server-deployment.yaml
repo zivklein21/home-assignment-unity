@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.webServer.deployment.name }}
+spec:
+  replicas: {{ .Values.webServer.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.webServer.deployment.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.webServer.deployment.name }}
+    spec:
+      containers:
+        - name: {{ .Values.webServer.deployment.name }}
+          image: "{{ .Values.webServer.deployment.image }}:{{ .Values.webServer.deployment.tag }}"
+          ports:
+            - containerPort: {{ .Values.webServer.deployment.containerPort }}
+          env:
+            - name: KAFKA_BROKERS
+              value: kafka:9092
+            - name: CUSTOMER_API_BASE_URL
+              value: http://customer-api 

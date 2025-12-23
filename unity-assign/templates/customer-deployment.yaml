@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.customerApi.deployment.name }}
+spec:
+  replicas: {{ .Values.customerApi.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.customerApi.deployment.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.customerApi.deployment.name }}
+    spec:
+      containers:
+        - name: {{ .Values.customerApi.deployment.name }}
+          image: "{{ .Values.customerApi.deployment.image }}:{{ .Values.customerApi.deployment.tag }}"
+          ports:
+            - containerPort: {{ .Values.customerApi.deployment.containerPort }}
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongo:27017/customers
+            - name: KAFKA_BROKERS
+              value: kafka:9092
+            - name: KAFKA_TOPIC
+              value: purchases
+            - name: KAFKA_GROUP_ID
+              value: customer-api

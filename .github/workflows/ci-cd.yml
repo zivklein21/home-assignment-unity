@@ -1,0 +1,137 @@
+name: CI/CD Pipeline
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - 'frontend/**'
+      - 'backend/customer-api/**'
+      - 'backend/web-server/**'
+
+jobs:
+# ------------------------------------------------
+# Detect which services changed
+# ------------------------------------------------
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      customer_api: ${{ steps.filter.outputs.customer_api }}
+      web_server: ${{ steps.filter.outputs.web_server }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changes
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          base: ${{ github.event.before }}
+          ref: ${{ github.sha }}
+          filters: |
+            frontend:
+              - 'frontend/**'
+            customer_api:
+              - 'backend/customer-api/**'
+            web_server:
+              - 'backend/web-server/**'
+              
+# ------------------------------------------------
+# Build images + update Helm (parallel)
+# ------------------------------------------------
+  build-images:
+    needs: detect-changes
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service:
+          - name: frontend
+            enabled: ${{ needs.detect-changes.outputs.frontend }}
+            path: frontend
+            image: frontend-unity
+            valuesKey: frontend.deployment.tag
+
+          - name: customer-api
+            enabled: ${{ needs.detect-changes.outputs.customer_api }}
+            path: backend/customer-api
+            image: customer-api
+            valuesKey: customerApi.deployment.tag
+
+          - name: web-server
+            enabled: ${{ needs.detect-changes.outputs.web_server }}
+            path: backend/web-server
+            image: web-server
+            valuesKey: webServer.deployment.tag
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        if: matrix.service.enabled == 'true'
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA::10}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        if: matrix.service.enabled == 'true'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build & Push Docker image 
+        if: matrix.service.enabled == 'true'
+        run: |
+          docker build -t "${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.image }}:$IMAGE_TAG" ${{ matrix.service.path }}
+          docker push "${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.image }}:$IMAGE_TAG"
+
+# ------------------------------------------------
+# Update Helm values + git push (ONCE)
+# ------------------------------------------------
+  update-helm:
+    needs: 
+      - detect-changes
+      - build-images
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA::10}" >> $GITHUB_ENV
+
+      - name: Update Helm values for changed services
+        run: |
+          echo "Using IMAGE_TAG=$IMAGE_TAG"
+
+          if [[ "${{ needs.detect-changes.outputs.frontend }}" == "true" ]]; then
+            yq -i '.frontend.deployment.tag = strenv(IMAGE_TAG)' unity-assign/values.yaml
+          fi
+
+          if [[ "${{ needs.detect-changes.outputs.customer_api }}" == "true" ]]; then
+            yq -i '.customerApi.deployment.tag = strenv(IMAGE_TAG)' unity-assign/values.yaml
+          fi
+
+          if [[ "${{ needs.detect-changes.outputs.web_server }}" == "true" ]]; then
+            yq -i '.webServer.deployment.tag = strenv(IMAGE_TAG)' unity-assign/values.yaml
+          fi
+
+          echo "Final values.yaml:"
+          cat unity-assign/values.yaml
+
+      - name: Commit and push Helm values
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add unity-assign/values.yaml
+          git commit -m "chore(deploy): update image tags to $IMAGE_TAG"
+
+          git push origin ${GITHUB_REF_NAME}

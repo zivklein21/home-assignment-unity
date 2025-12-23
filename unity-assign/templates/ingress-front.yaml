@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.ingress.front.name }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: {{ .Values.ingress.front.rewriteTarget }}
+spec:
+  ingressClassName: {{ .Values.ingress.front.ingressClassName }}
+  rules:
+    - host: {{ .Values.ingress.front.host }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.front.path }}
+            pathType: {{ .Values.ingress.front.pathType }}
+            backend:
+              service:
+                name: {{ .Values.ingress.front.serviceName }}
+                port:
+                  number: {{ .Values.ingress.front.number }}
