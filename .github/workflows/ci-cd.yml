@@ -46,22 +46,22 @@ jobs:
       - name: Build & Push Docker image - front & Update Helm
         if: steps.filter.outputs.frontend == 'true'
         run: |
-          docker build -t "${{ secrets.DOCKER_USERNAME }}"/frontend-unity:env(IMAGE_TAG) ./frontend
-          docker push "${{ secrets.DOCKER_USERNAME }}"/frontend-unity:env(IMAGE_TAG)
-          yq -i '.frontend.deployment.tag = env(IMAGE_TAG)' unity-assign/values.yaml
+          docker build -t "${{ secrets.DOCKER_USERNAME }}"/frontend-unity:$IMAGE_TAG ./frontend
+          docker push "${{ secrets.DOCKER_USERNAME }}"/frontend-unity:$IMAGE_TAG
+          yq -i '.frontend.deployment.tag = strenv(IMAGE_TAG)' unity-assign/values.yaml
           
 # -------------- Build and Push back - customer api --------------
       - name: Build & Push Docker image - customer-api & Update Helm
         if: steps.filter.outputs.customer_api == 'true'
         run: |
-          docker build -t "${{ secrets.DOCKER_USERNAME }}"/customer-api:env(IMAGE_TAG) ./backend/customer-api
-          docker push "${{ secrets.DOCKER_USERNAME }}"/customer-api:env(IMAGE_TAG)
-          yq -i '.customerApi.deployment.tag = env(IMAGE_TAG)' unity-assign/values.yaml
+          docker build -t "${{ secrets.DOCKER_USERNAME }}"/customer-api:$IMAGE_TAG ./backend/customer-api
+          docker push "${{ secrets.DOCKER_USERNAME }}"/customer-api:$IMAGE_TAG
+          yq -i '.customerApi.deployment.tag = strenv(IMAGE_TAG)' unity-assign/values.yaml
 
 # -------------- Build and Push back - web server --------------
       - name: Build & Push Docker image - web-server & Update Helm
         if: steps.filter.outputs.web_server == 'true'
         run: |
-          docker build -t "${{ secrets.DOCKER_USERNAME }}"/web-server:env(IMAGE_TAG) ./backend/web-server
-          docker push "${{ secrets.DOCKER_USERNAME }}"/web-server:env(IMAGE_TAG)
-          yq -i '.webServer.deployment.tag = env(IMAGE_TAG)' unity-assign/values.yaml
+          docker build -t "${{ secrets.DOCKER_USERNAME }}"/web-server:$IMAGE_TAG ./backend/web-server
+          docker push "${{ secrets.DOCKER_USERNAME }}"/web-server:$IMAGE_TAG
+          yq -i '.webServer.deployment.tag = strenv(IMAGE_TAG)' unity-assign/values.yaml
