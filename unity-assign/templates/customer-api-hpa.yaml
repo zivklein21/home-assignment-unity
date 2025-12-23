@@ -1,0 +1,19 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.customerApi.hpa.name }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.customerApi.hpa.target }}
+  minReplicas: {{ .Values.customerApi.hpa.minReplicas }}
+  maxReplicas: {{ .Values.customerApi.hpa.maxReplicas }}
+  metrics:
+  - type: External
+    external:
+      metric:
+        name: {{ .Values.customerApi.hpa.metrics.name }}
+      target:
+        type: {{ .Values.customerApi.hpa.metrics.type }}
+        averageValue: {{ .Values.customerApi.hpa.metrics.value }}

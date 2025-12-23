@@ -1,0 +1,126 @@
+### CUSTOMER API
+customerApi:
+  hpa:
+    name: customer-api-hpa
+    minReplicas: 1
+    maxReplicas: 4
+    target: customer-api
+    metrics:
+      name: kafka_consumergroup_lag
+      type: AverageValue
+      value: "50"
+    
+  deployment:
+    name: customer-api
+    replicas: 1
+    image: zivklein21/customer-api
+    tag: v4
+    containerPort: 8080
+
+  service:
+    port: 80
+    targetPort: 8080
+    type: ClusterIP
+
+### WEB SERVER
+webServer:
+  hpa:
+    name: web-server-latency-hpa
+    minReplicas: 2
+    maxReplicas: 10
+    target: web-server
+    metrics:
+      name: http_request_duration_milliseconds
+      type: AverageValue
+      value: "200"
+
+  deployment:
+    name: web-server
+    replicas: 1
+    image: zivklein21/web-server
+    tag: v4
+    containerPort: 8080
+
+  service:
+    port: 80
+    targetPort: 8080
+    type: ClusterIP
+
+### FRONTEND
+frontend:
+  deployment:
+    name: frontend
+    replicas: 1
+    image: zivklein21/frontend-unity
+    tag: v1
+    containerPort: 80
+
+  service:
+    port: 80
+    targetPort: 80
+    type: ClusterIP
+
+### KAFKA
+kafka:
+  statefulset:
+    name: kafka
+    serviceName: "kafka"
+    replicas: 1
+    image: redpandadata/redpanda
+    tag: v24.1.6
+    containerPort: 9092
+
+  service:
+    port: 9092
+    targetPort: 9092
+    portName: kafka
+
+### ZOOKEEPER
+zookeeper:
+  deployment:
+    name: zookeeper
+    replicas: 1
+    image: confluentinc/cp-zookeeper
+    tag: 7.5.0
+    containerPort: 2181
+
+  service:
+    port: 2181
+    targetPort: 2181
+    portName: client
+
+### MONGO
+mongo:
+  statefulset:
+    name: mongo
+    serviceName: "mongo"
+    replicas: 1
+    image: mongo
+    tag: 6.0
+    containerPort: 27017
+  
+  service:
+    port: 27017
+    targetPort: 27017
+
+### INGRESS
+ingress:
+  back:
+    name: web-server-ingress
+    rewriteTarget: /$2
+    ingressClassName: nginx
+    host: localhost
+    path: /api(/|$)(.*)
+    pathType: Prefix
+    serviceName: web-server
+    number: 80
+  
+  front:
+    name: frontend-ingress
+    rewriteTarget: /
+    ingressClassName: nginx
+    host: localhost
+    path: /
+    pathType: Prefix
+    serviceName: frontend
+    number: 80

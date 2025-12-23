@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.zookeeper.deployment.name }}
+spec:
+  selector:
+    app: {{ .Values.zookeeper.deployment.name }}
+  ports:
+    - name: {{ .Values.zookeeper.service.portName }}
+      port: {{ .Values.zookeeper.service.port }}
+      targetPort: {{ .Values.zookeeper.service.targetPort }}

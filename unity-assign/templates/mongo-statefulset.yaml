@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.mongo.statefulset.name }}
+spec:
+  serviceName: {{ .Values.mongo.statefulset.serviceName }}
+  replicas: {{ .Values.mongo.statefulset.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.mongo.statefulset.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.mongo.statefulset.name }}
+    spec:
+      containers:
+        - name: {{ .Values.mongo.statefulset.name }}
+          image: "{{ .Values.mongo.statefulset.image }}:{{ .Values.mongo.statefulset.tag }}"
+          ports:
+            - containerPort: {{ .Values.mongo.statefulset.containerPort }}
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
