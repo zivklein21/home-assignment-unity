@@ -46,7 +46,7 @@ jobs:
       - name: Deploy frontend
         if: steps.filter.outputs.frontend == 'true'
         run: |
-          helm upgrade unity-home ./unit-assign \
+          helm upgrade unity-home ./unity-assign \
             --reuse-values \
             --set frontend.deployment.tag=${GITHUB_SHA::10}
 
