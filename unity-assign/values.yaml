@@ -13,7 +13,7 @@ customerApi:
     name: customer-api
     replicas: 1
     image: zivklein21/customer-api
-    tag: c24b03dbba
+    tag: efff433b6e
     containerPort: 8080
   service:
     port: 80
@@ -34,7 +34,7 @@ webServer:
     name: web-server
     replicas: 1
     image: zivklein21/web-server
-    tag: 9945f9f6b0
+    tag: efff433b6e
     containerPort: 8080
   service:
     port: 80
@@ -46,7 +46,7 @@ frontend:
     name: frontend
     replicas: 1
     image: zivklein21/frontend-unity
-    tag: c24b03dbba
+    tag: efff433b6e
     containerPort: 80
   service:
     port: 80
