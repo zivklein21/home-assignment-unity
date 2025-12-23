@@ -21,7 +21,7 @@ spec:
             - name: KAFKA_BROKERS
               value: kafka:9092
             - name: CUSTOMER_API_BASE_URL
-              value: http://customer-api  # internal svc
+              value: http://customer-api 
 ---
 apiVersion: v1
 kind: Service
@@ -33,3 +33,4 @@ spec:
   ports:
     - port: 80
       targetPort: 8080
+  type: ClusterIP

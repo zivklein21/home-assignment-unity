@@ -31,8 +31,9 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Ziv - Unity</h1>
-      <div className="input-row">
+      <h1 className="title">Ziv - Unity</h1>
+
+      <div className="form-row">
         <input
           type="text"
           placeholder="User ID"
@@ -41,39 +42,51 @@ function App() {
         />
         <input
           type="text"
-          placeholder="Use Name"
+          placeholder="User Name"
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
         />
         <input
           type="number"
-          placeholder="Price"
+          placeholder="User Price"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
         />
-        <button onClick={handleBuy}>BUY</button>
+        <button className="btn" onClick={handleBuy}>Buy</button>
       </div>
 
-      <div className="input-row">
+      <div className="form-row">
         <input
           type="text"
           placeholder="User ID"
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
         />
-        <button onClick={handleGetPurchases}>Get My Purchases</button>
+        <button className="btn" onClick={handleGetPurchases}>Get Purchases</button>
       </div>
 
       {result.length > 0 && (
         <div className="results">
-          <h2>My Purchases</h2>
-          <ul>
-            {result.map((purchase, index) => (
-              <li key={index}>
-                {purchase.userName} bought for {purchase.price}
-              </li>
-            ))}
-          </ul>
+          <table>
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>Price</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.map((purchase, index) => (
+                <tr key={index}>
+                  <td>{purchase.userid}</td>
+                  <td>{purchase.username}</td>
+                  <td>{purchase.price}</td>
+                  <td>{new Date(purchase.timestamp).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

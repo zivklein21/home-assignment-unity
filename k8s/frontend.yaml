@@ -27,9 +27,9 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: zivklein21/unity-frontend:new1
+          image: zivklein21/frontend-unity:v1
           ports:
             - containerPort: 80
           env:
             - name: VITE_API_BASE_URL
-              value: "web-server"
+              value: "/api"
