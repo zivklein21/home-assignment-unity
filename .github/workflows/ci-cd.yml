@@ -2,12 +2,12 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "ci-cd" ]
     paths:
       - 'frontend/**'
       - 'backend/customer-api/**'
       - 'backend/web-server/**'
-      
+
 jobs:
   build-image:
     runs-on: ubuntu-latest
