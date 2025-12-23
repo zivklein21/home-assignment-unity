@@ -49,6 +49,9 @@ jobs:
           docker build -t "${{ secrets.DOCKER_USERNAME }}"/frontend-unity:$IMAGE_TAG ./frontend
           docker push "${{ secrets.DOCKER_USERNAME }}"/frontend-unity:$IMAGE_TAG
           yq -i '.frontend.deployment.tag = strenv(IMAGE_TAG)' unity-assign/values.yaml
+          git config --global user.email "${{ secrets.DOCKER_USERNAME }}@gmail.com"
+          git config --global user.name "${{ secrets.DOCKER_USERNAME }}"
+
           git add unity-assign/values.yaml
           git commit -m "set new tag - $IMAGE_TAG"
           git push origin ${GITHUB_REF_NAME}
