@@ -49,6 +49,10 @@ jobs:
           docker build -t "${{ secrets.DOCKER_USERNAME }}"/frontend-unity:$IMAGE_TAG ./frontend
           docker push "${{ secrets.DOCKER_USERNAME }}"/frontend-unity:$IMAGE_TAG
           yq -i '.frontend.deployment.tag = strenv(IMAGE_TAG)' unity-assign/values.yaml
+          git add unity-assign/values.yaml
+          git commit -m "set new tag - $IMAGE_TAG"
+          git push origin ${GITHUB_REF_NAME}
+
           
 # -------------- Build and Push back - customer api --------------
       - name: Build & Push Docker image - customer-api & Update Helm
