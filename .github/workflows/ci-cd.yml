@@ -10,9 +10,7 @@ on:
       - 'frontend/**'
       - 'backend/customer-api/**'
       - 'backend/web-server/**'
-    paths-ignore:
-      - 'unity-assign/values.yaml'
-
+      
 jobs:
 # ------------------------------------------------
 # Detect which services changed
