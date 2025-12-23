@@ -97,7 +97,7 @@ ingress:
     ingressClassName: nginx
     host: localhost
     path: /api(/|$)(.*)
-    pathType: Prefix
+    pathType: ImplementationSpecific
     serviceName: web-server
     number: 80
   front:
