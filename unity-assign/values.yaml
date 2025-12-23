@@ -34,7 +34,7 @@ webServer:
     name: web-server
     replicas: 1
     image: zivklein21/web-server
-    tag: ca49d1a4c8
+    tag: f28a94684a
     containerPort: 8080
   service:
     port: 80
