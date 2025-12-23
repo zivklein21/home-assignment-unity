@@ -88,10 +88,12 @@ jobs:
           docker push "${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.image }}:$IMAGE_TAG"
 
 # ------------------------------------------------
-# 3️⃣ Update Helm values + git push (ONCE)
+# Update Helm values + git push (ONCE)
 # ------------------------------------------------
   update-helm:
-    needs: [detect-changes, build-images]
+    needs: 
+      - detect-changes
+      - build-images
     runs-on: ubuntu-latest
 
     steps:
