@@ -26,12 +26,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
       - name: Detect changes
         id: filter
         uses: dorny/paths-filter@v2
         with:
+          base: ${{ github.event.before }}
+          ref: ${{ github.sha }}
           filters: |
             frontend:
               - 'frontend/**'
