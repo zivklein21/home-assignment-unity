@@ -16,7 +16,7 @@ jobs:
         run: |
           docker build -t "${{ secrets.DOCKER_USERNAME }}"/frontend-unity-test:latest ./frontend
           docker push "${{ secrets.DOCKER_USERNAME }}"/frontend-unity-test:latest
-        when:
+        on:
           push:
             paths:
               - 'frontend/**'
@@ -25,7 +25,7 @@ jobs:
         run: |
           docker build -t "${{ secrets.DOCKER_USERNAME }}"/customer-api-test:latest ./backend/customer-api
           docker push "${{ secrets.DOCKER_USERNAME }}"/customer-ap-test:latest
-        when:
+        on:
           push:
             paths:
               - 'backend/customer-api/**'
@@ -34,7 +34,7 @@ jobs:
         run: |
           docker build -t "${{ secrets.DOCKER_USERNAME }}"/web-server-test:latest ./backend/web-server
           docker push "${{ secrets.DOCKER_USERNAME }}"/web-server-test:latest
-        when:
+        on:
           push:
             paths:
               - 'backend/web-server/**'
