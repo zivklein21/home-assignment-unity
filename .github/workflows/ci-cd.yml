@@ -87,13 +87,36 @@ jobs:
           docker build -t "${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.image }}:$IMAGE_TAG" ${{ matrix.service.path }}
           docker push "${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.image }}:$IMAGE_TAG"
 
-      - name: Update Helm Chart
-        if: matrix.service.enabled == 'true'
+      - name: Update Helm values for changed services
         run: |
-          yq -i '.${{ matrix.service.valuesKey }} = strenv(IMAGE_TAG)' unity-assign/values.yaml
-          git config --global user.email "${{ secrets.DOCKER_USERNAME }}@gmail.com"
-          git config --global user.name "${{ secrets.DOCKER_USERNAME }}"
+          echo "Using IMAGE_TAG=$IMAGE_TAG"
+        
+          if [[ "${{ needs.detect-changes.outputs.frontend }}" == "true" ]]; then
+            echo "Updating frontend tag"
+            yq -i '.frontend.deployment.tag = strenv(IMAGE_TAG)' unity-assign/values.yaml
+          fi
+
+          if [[ "${{ needs.detect-changes.outputs.customer_api }}" == "true" ]]; then
+            echo "Updating customer-api tag"
+            yq -i '.customerApi.deployment.tag = strenv(IMAGE_TAG)' unity-assign/values.yaml
+          fi
+
+          if [[ "${{ needs.detect-changes.outputs.web_server }}" == "true" ]]; then
+            echo "Updating web-server tag"
+            yq -i '.webServer.deployment.tag = strenv(IMAGE_TAG)' unity-assign/values.yaml
+          fi
+
+          echo "Final values.yaml:"
+          cat unity-assign/values.yaml
+
+
+      - name: Commit and push Helm values
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
 
           git add unity-assign/values.yaml
-          git commit -m "set new tag - $IMAGE_TAG"
+          
+          git commit -m "chore(deploy): update image tags to $IMAGE_TAG"
+
           git push origin ${GITHUB_REF_NAME}
