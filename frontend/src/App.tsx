@@ -2,12 +2,25 @@ import React, { useState } from "react";
 import "./App.css";
 import { createPurchase, getPurchases } from "./api";
 
+/**
+ * App Component
+ *
+ * Main frontend component of the application.
+ * Acts as a simple UI for sending purchase events and
+ * retrieving purchase history via the Web Server API.
+ */
 function App() {
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
   const [price, setPrice] = useState("");
   const [result, setResult] = useState<any[]>([]);
 
+   /**
+   * Sends a purchase request to the Web Server.
+   *
+   * The Web Server publishes the purchase event to Kafka,
+   * enabling asynchronous processing and persistence.
+   */
   const handleBuy = async () => {
     try {
       const numericPrice = parseFloat(price);
@@ -19,6 +32,12 @@ function App() {
     }
   };
 
+  /**
+   * Fetches all purchases for a specific user.
+   *
+   * The frontend communicates only with the Web Server,
+   * which delegates data retrieval to the Customer API.
+   */
   const handleGetPurchases = async () => {
     try {
       const purchases = await getPurchases(userId);

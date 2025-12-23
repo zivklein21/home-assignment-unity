@@ -34,7 +34,7 @@ webServer:
     name: web-server
     replicas: 1
     image: zivklein21/web-server
-    tag: 4a1e2dc663
+    tag: v4
     containerPort: 8080
   service:
     port: 80
@@ -84,7 +84,7 @@ mongo:
     serviceName: "mongo"
     replicas: 1
     image: mongo
-    tag: 6.0
+    tag: 6.0.13
     containerPort: 27017
   service:
     port: 27017
