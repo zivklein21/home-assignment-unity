@@ -43,6 +43,14 @@ https://github.com/zivklein21/home-assignment-unity.git
 cd home-assignment-unity
 ```
 
+- Install nginx ingress controller - to make back and front ingress 
+
+```Bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
+```
+
 - Deploy the application to your local Kubernetes cluster using Helm:
 
 ```Bash

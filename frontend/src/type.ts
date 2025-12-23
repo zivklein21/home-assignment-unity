@@ -1,4 +1,3 @@
-// frontend/src/types.ts
 export interface Purchase {
     userId: string;
     productId: string;
