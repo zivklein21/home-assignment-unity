@@ -39,7 +39,7 @@ helm version
 - Clone the repository to your local machine:
 
 ```Bash
-https://github.com/zivklein21/home-assignment-unity.git
+git clone https://github.com/zivklein21/home-assignment-unity.git
 cd home-assignment-unity
 ```
 
