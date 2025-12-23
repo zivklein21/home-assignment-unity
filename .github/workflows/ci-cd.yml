@@ -81,7 +81,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & Push Docker image 
+      - name: build-images 
         if: matrix.service.enabled == 'true'
         run: |
           docker build -t "${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.image }}:$IMAGE_TAG" ${{ matrix.service.path }}
